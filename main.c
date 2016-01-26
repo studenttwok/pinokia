@@ -44,6 +44,14 @@ int main(int argc, char ** argv) {
         lcd_set_pixel(lcd, x + 1, y + 1, color);
       }
     }
+
+    lcd_draw_circle(lcd, 80, 80, 10, BLUE);
+    lcd_draw_br_line(lcd, 10, 10, 40, 40 , RED);
+    lcd_fill_rectangle(lcd, 30, 30, 40, 70, GREEN);
+    lcd_draw_rectangle(lcd, 100, 100, 20, 30, YELLOW);
+
+
+
   } else if (demo == 1) {
     int i;
     int offset;

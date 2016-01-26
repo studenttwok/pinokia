@@ -108,4 +108,11 @@ void lcd_clear(LCD *lcd, int color);
 void lcd_set_pixel(LCD *lcd, uint8_t x, uint8_t y, uint16_t color);
 void lcd_dispose(LCD *lcd);
 
+// Helper Functions
+void lcd_draw_circle(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t radius, uint16_t color);
+void lcd_draw_br_line(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color);
+void lcd_fill_rectangle(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint16_t color);
+void lcd_draw_rectangle(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint16_t color);
+
+
 #endif

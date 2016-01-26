@@ -207,3 +207,118 @@ void lcd_dispose(LCD *lcd) {
   close(lcd->fd);
   gpio_shutdown();
 }
+
+
+
+void lcd_draw_circle(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t radius, uint16_t color) { //Midpoint circle algorithm
+    uint8_t f = 1 - radius;
+    uint8_t ddF_x = 1;
+    uint8_t ddF_y = -2 * radius;
+    uint8_t x = 0;
+    uint8_t y = radius;
+
+    lcd_set_pixel(lcd, x0, y0 + radius, color);
+    lcd_set_pixel(lcd, x0, y0 - radius, color);
+    lcd_set_pixel(lcd, x0 + radius, y0, color);
+    lcd_set_pixel(lcd, x0 - radius, y0, color);
+
+    while(x < y) {
+        if(f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
+        lcd_set_pixel(lcd, x0 + x, y0 + y, color);
+        lcd_set_pixel(lcd, x0 - x, y0 + y, color);
+        lcd_set_pixel(lcd, x0 + x, y0 - y, color);
+        lcd_set_pixel(lcd, x0 - x, y0 - y, color);
+        lcd_set_pixel(lcd, x0 + y, y0 + x, color);
+        lcd_set_pixel(lcd, x0 - y, y0 + x, color);
+        lcd_set_pixel(lcd, x0 + y, y0 - x, color);
+        lcd_set_pixel(lcd, x0 - y, y0 - x, color);
+    }
+}
+
+
+void lcd_draw_br_line(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color) { // Bresenham Line Algorithm
+    uint8_t x;
+    uint8_t Dx = x1 - x0; 
+    uint8_t Dy = y1 - y0;
+    uint8_t steep = (abs(Dy) >= abs(Dx));
+    if (steep) {
+
+        uint8_t a = x0;
+        uint8_t b = y0;
+        x0=b;
+        y0=a;
+
+        a = x1;
+        b = y1;
+        x1=b;
+        y1=a;
+
+       // recompute Dx, Dy after swap
+       Dx = x1 - x0;
+       Dy = y1 - y0;
+   }
+   uint8_t xstep = 1;
+   if (Dx < 0) {
+       xstep = -1;
+       Dx = -Dx;
+   }
+   uint8_t ystep = 1;
+   if (Dy < 0) {
+       ystep = -1;		
+       Dy = -Dy; 
+   }
+   uint8_t TwoDy = 2*Dy; 
+   uint8_t TwoDyTwoDx = TwoDy - 2*Dx; // 2*Dy - 2*Dx
+   uint8_t E = TwoDy - Dx; //2*Dy - Dx
+   uint8_t y = y0;
+   uint8_t xDraw, yDraw;	
+   for (x = x0; x != x1; x += xstep) {		
+       if (steep) {			
+           xDraw = y;
+           yDraw = x;
+       } else {			
+           xDraw = x;
+           yDraw = y;
+       }
+       // plot
+       lcd_set_pixel(lcd, xDraw, yDraw, color);
+       // next
+       if (E > 0) {
+           E += TwoDyTwoDx; //E += 2*Dy - 2*Dx;
+           y = y + ystep;
+       } else {
+           E += TwoDy; //E += 2*Dy;
+       }
+   }
+}
+
+void lcd_fill_rectangle(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint16_t color) {
+    uint8_t i;
+    for (i = y0+1; i < y0+height; i++) {
+        lcd_draw_br_line(lcd, x0, i, x0+width, i, color);
+    }
+}
+
+void lcd_draw_rectangle(LCD *lcd, uint8_t x0, uint8_t y0, uint8_t width, uint8_t height, uint16_t color) {
+    uint8_t i;
+    
+    // Draw Top side
+    lcd_draw_br_line(lcd, x0, y0, x0+width+1, y0, color);
+
+    // Draw Bottom side 
+    lcd_draw_br_line(lcd, x0, y0+height, x0+width+1, y0+height, color);
+
+    // Now the sides
+    for (i = y0+1; i < y0+height; i++) {
+        lcd_set_pixel(lcd, x0, i, color);
+        lcd_set_pixel(lcd, x0 + width, i, color);
+    }
+}
+

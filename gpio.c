@@ -77,28 +77,28 @@ void gpio_shutdown() {
   close(mem_fd);
 }
 
-inline uint32_t gpio_word() {
+uint32_t gpio_word() {
   return gpio[13];
 }
 
-inline uint32_t gpio_set_input(uint32_t pin) {
+uint32_t gpio_set_input(uint32_t pin) {
   return INP_GPIO(pin);
 }
 
-inline uint32_t gpio_set_output(uint32_t pin) {
+uint32_t gpio_set_output(uint32_t pin) {
   INP_GPIO(pin);
   return OUT_GPIO(pin);
 }
 
-inline uint32_t gpio_alternate_function(uint32_t pin, uint32_t alternate) {
+uint32_t gpio_alternate_function(uint32_t pin, uint32_t alternate) {
   INP_GPIO(pin);
   return SET_GPIO_ALT(pin, alternate);
 }
 
-inline uint32_t gpio_set(uint32_t pins) {
+uint32_t gpio_set(uint32_t pins) {
   return GPIO_SET = pins;
 }
 
-inline uint32_t gpio_clear(uint32_t pins) {
+uint32_t gpio_clear(uint32_t pins) {
   return GPIO_CLR = pins;
 }
